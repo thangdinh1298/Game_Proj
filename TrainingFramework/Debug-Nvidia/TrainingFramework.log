@@ -1,0 +1,7 @@
+﻿cl : command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
+  GSOption.cpp
+C:\Users\Admin\Desktop\Programming_lesson_06\TrainingFramework\src\GameStates\GSOption.cpp(21,60): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+C:\Users\Admin\Desktop\Programming_lesson_06\TrainingFramework\src\GameStates\GSOption.cpp(21,42): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+C:\Users\Admin\Desktop\Programming_lesson_06\TrainingFramework\src\GameStates\GSOption.cpp(27,36): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+C:\Users\Admin\Desktop\Programming_lesson_06\TrainingFramework\src\GameStates\GSOption.cpp(37,36): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+  TrainingFramework.vcxproj -> C:\Users\Admin\Desktop\Programming_lesson_06\\BIN-Nvidia\TrainingFramework.exe
