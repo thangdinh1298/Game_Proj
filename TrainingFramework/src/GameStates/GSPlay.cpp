@@ -10,11 +10,10 @@
 #include "Text.h"
 #include "../FallingObject.h"
 #include "AnimationSprite.h"
+#include "Spawner.h"
 
 extern int screenWidth; //need get on Graphic engine
 extern int screenHeight; //need get on Graphic engine
-#define LEFT_SWITCH (1 << 1);
-#define RIGHT_SWITCH (1 << 2);
 
 GSPlay::GSPlay()
 {
@@ -38,16 +37,16 @@ void GSPlay::Init()
 	m_BackGround->Set2DPosition(screenWidth / 2, screenHeight / 2);
 	m_BackGround->SetSize(screenWidth, screenHeight);
 
-	//Game objects
 	shader = ResourceManagers::GetInstance()->GetShader("AnimationSpriteShader");
 
+	//Player Object
 	FallingObject::Init(); //Init class texture
 
-	m_playerLeftCircle = std::make_shared<FallingObject>(model, shader/*, texture*/, 0.1f, 6);
+	m_playerLeftCircle = std::make_shared<FallingObject>(model, shader, 0.1f, 6);
 	m_playerLeftCircle->Set2DPosition(screenWidth / 4, 4.65f * screenHeight / 6);
 	m_playerLeftCircle->SetSize(50, 50);
 
-	m_playerRightCircle = std::make_shared<FallingObject>(model, shader/*, texture*/, 0.1f, 6);
+	m_playerRightCircle = std::make_shared<FallingObject>(model, shader, 0.1f, 6);
 	m_playerRightCircle->Set2DPosition(3.0f * screenWidth / 4, 4.65f * screenHeight / 6);
 	m_playerRightCircle->SetSize(50, 50);
 
@@ -56,6 +55,7 @@ void GSPlay::Init()
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("arialbd");
 	m_score = std::make_shared< Text>(shader, font, "score: 10", TEXT_COLOR::RED, 1.0);
 	m_score->Set2DPosition(Vector2(5, 25));
+
 
 }
 
@@ -81,36 +81,44 @@ void GSPlay::HandleEvents()
 
 }
 
+const int LEFT_SWITCH = (1 << 1);
+const int RIGHT_SWITCH = (1 << 2);
+static int m_keyPressed = 0;
+
 void GSPlay::HandleKeyEvents(int key, bool bIsPressed)
 {
+	//InputManager::GetInstance()->RegisterKeyEvent(key, bIsPressed);
 
-	/*switch (key) 
+	switch (key)
 	{
-	case 'J':
-		if (bIsPressed) {
-			m_playerLeftCircle->
-			keyPressed |= LEFT_SWITCH;
-			std::cout << "Key J pressed\n";
-		}
-		else {
-			keyPressed &= LEFT_SWITCH;
-			std::cout << "Key J released\n";
-		}
-		break;
+	case 'f':
 	case 'F':
 		if (bIsPressed) {
-			right_index++;
-			if (right_index == 4) right_index = 0;
-			m_playerRightCircle->SetTexture(texVec[right_index]);
-			keyPressed |= LEFT_SWITCH;
+			m_keyPressed |= LEFT_SWITCH;
+			m_playerLeftCircle->ChangeNextColor();
 			std::cout << "Key F pressed\n";
 		}
 		else {
-			keyPressed &= LEFT_SWITCH;
+			m_keyPressed &= ~LEFT_SWITCH;
 			std::cout << "Key F released\n";
 		}
 		break;
-	}*/
+	case 'j':
+	case 'J':
+		if (bIsPressed) {
+			m_keyPressed |= RIGHT_SWITCH;
+			m_playerRightCircle->ChangeNextColor();
+			std::cout << "Key J pressed\n";
+		}
+		else {
+			m_keyPressed &= ~RIGHT_SWITCH;
+			std::cout << "Key J released\n";
+		}
+		break;
+	}
+
+	/*if (m_keyPressed & RIGHT_SWITCH) m_playerRightCircle->ChangeNextColor();
+	if (m_keyPressed & LEFT_SWITCH) m_playerLeftCircle->ChangeNextColor();*/
 }
 
 void GSPlay::HandleTouchEvents(int x, int y, bool bIsPressed)
@@ -119,8 +127,18 @@ void GSPlay::HandleTouchEvents(int x, int y, bool bIsPressed)
 
 void GSPlay::Update(float deltaTime)
 {
+
 	m_playerLeftCircle->Update(deltaTime);
 	m_playerRightCircle->Update(deltaTime);
+	for (auto obj : m_gameObjects) obj->Update(deltaTime);
+	auto ptr = Spawner::GetInstance()->Spawn(deltaTime);
+	if(ptr) m_gameObjects.push_back(ptr);
+	
+	/*if (m_keyPressed & RIGHT_SWITCH) {
+		m_playerRightCircle->ChangeNextColor();
+		std::cout << "Update\n";
+	}
+	if (m_keyPressed & LEFT_SWITCH) m_playerLeftCircle->ChangeNextColor();*/
 }
 
 void GSPlay::Draw()
@@ -129,6 +147,7 @@ void GSPlay::Draw()
 	m_score->Draw();
 	m_playerLeftCircle->Draw();
 	m_playerRightCircle->Draw();
+	for (auto obj : m_gameObjects) obj->Draw();
 }
 
 void GSPlay::SetNewPostionForBullet()

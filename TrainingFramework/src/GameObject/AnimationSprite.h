@@ -11,8 +11,8 @@ public:
 	//AnimationSprite();
 	AnimationSprite(std::shared_ptr<Models> model, std::shared_ptr<Shaders> shader, std::shared_ptr<Texture> texture, float frameTime, int numFrame);
 
-	void		Init() override;
-	void		Draw() override;
+	void				Init() override;
+	void				Draw() override;
 	virtual void		Update(GLfloat deltatime) override;
 
 private: 
